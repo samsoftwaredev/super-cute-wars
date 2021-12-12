@@ -1,10 +1,11 @@
 const prompt = require('prompt-sync')({ sigint: true });
 const { log, generateRandomId } = require('../tools');
-const { CREATURE_ACTION, GAME_STATE } = require('../constants');
+const { CREATURE_ACTION, GAME_STATE, GAME_RULES } = require('../constants');
 
 class Battle {
   gameId = generateRandomId();
   gameHistory = [];
+  gameRound = 0;
   listOfCreaturesInBattle = [];
   currentGameState = null;
   isGameOver = false;
@@ -17,7 +18,19 @@ class Battle {
     this.isGameOver = false;
   }
 
+  increaseGameRound = () => {
+    this.gameRound += 1;
+  };
+
+  isMaxGameRoundReached = () =>
+    this.gameRound === GAME_RULES.MAX_ROUNDS_PER_GAME;
+
   getGameState = () => ({
+    round: {
+      currentGameRound: this.gameRound,
+      isMaxGameRoundReached: this.isMaxGameRoundReached,
+      maxNumOfGameRounds: GAME_RULES.MAX_ROUNDS_PER_GAME,
+    },
     isGameOver: this.isGameOver,
     winner: this.winner,
     creaturesBattling: this.listOfCreaturesInBattle.map((c) => c.overview()),
@@ -92,8 +105,10 @@ class Battle {
       const creatureDied = this.listOfCreaturesInBattle.some((creature) =>
         creature.isDead(),
       );
-      if (creatureDied) {
+      if (creatureDied || this.isMaxGameRoundReached()) {
         this.endBattle();
+      } else {
+        this.increaseGameRound();
       }
     }
   };
@@ -102,15 +117,24 @@ class Battle {
     this.currentGameState = GAME_STATE.ENDING;
     this.addToGameHistory('Game ended');
     this.isGameOver = true;
+
+    // number of max rounds reached
+    if (this.isMaxGameRoundReached()) {
+      this.addToGameHistory(`There was a Draw. Max rounds reached.`);
+      this.winner = null;
+      return;
+    }
+
     // if both creatures die
     const isEveryCreatureDead = this.listOfCreaturesInBattle.every((creature) =>
       creature.isDead(),
     );
     if (isEveryCreatureDead) {
-      this.addToGameHistory(`There was a Draw!`);
+      this.addToGameHistory(`There was a Draw. Both creatures die.`);
       this.winner = null;
       return;
     }
+
     // if one creature dies
     const creatureWon = this.listOfCreaturesInBattle.find(
       (creature) => !creature.isDead(),
