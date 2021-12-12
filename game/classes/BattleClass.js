@@ -1,5 +1,4 @@
 const prompt = require('prompt-sync')({ sigint: true });
-const Arena = require('./ArenaClass');
 const { log, generateRandomId } = require('../tools');
 const { CREATURE_ACTION, GAME_STATE } = require('../constants');
 
