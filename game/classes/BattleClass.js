@@ -1,20 +1,29 @@
 const prompt = require('prompt-sync')({ sigint: true });
 const Arena = require('./ArenaClass');
 const { log, generateRandomId } = require('../tools');
-const { CREATURE_ACTION } = require('../constants');
+const { CREATURE_ACTION, GAME_STATE } = require('../constants');
 
 class Battle {
   gameId = generateRandomId();
   gameHistory = [];
   listOfCreaturesInBattle = [];
+  currentGameState = null;
   isGameOver = false;
+  winner = null;
   arena = null;
 
-  constructor(creatures, arenaName) {
+  constructor(creatures, arena) {
     this.listOfCreaturesInBattle = creatures;
-    this.arena = new Arena(arenaName);
+    this.arena = arena;
     this.isGameOver = false;
   }
+
+  getGameState = () => ({
+    isGameOver: this.isGameOver,
+    winner: this.winner,
+    creaturesBattling: this.listOfCreaturesInBattle.map((c) => c.overview()),
+    gameState: this.currentGameState,
+  });
 
   addToGameHistory = (action) => {
     log(`Arena (${this.arena.name}) - ${action}`);
@@ -47,40 +56,36 @@ class Battle {
   };
 
   executePlayersAction = () => {
-    const listOfActions = [];
+    const listOfActionsOrganized = [];
     // organize actions
     this.listOfCreaturesInBattle.forEach((creature) => {
       const status = creature.getState();
       if (creature.isAttacking()) {
         // attacks should be executed last
-        listOfActions.push({ creature, status });
+        listOfActionsOrganized.push({ creature, status });
       } else {
         // if action is not an attack it should be executed first
-        listOfActions.unshift({ creature, status });
+        listOfActionsOrganized.unshift({ creature, status });
       }
     });
     // execute actions
-    listOfActions.forEach(({ creature, status }) => {
+    listOfActionsOrganized.forEach(({ creature, status }) => {
       const opponent = this.getCreatureOpponent(creature);
       creature.executeCreatureAction(status.action, opponent);
     });
-    // check modes
-    return listOfActions;
   };
 
   startBattle = () => {
+    this.currentGameState = GAME_STATE.STARTING;
     this.addToGameHistory('Game started');
     const creature = this.listOfCreaturesInBattle[0];
     const opponent = this.getCreatureOpponent(creature);
-    this.addToGameHistory(
-      `Creatures ready to battle... 
-      ${creature.id}:${creature.name} vs ${opponent.id}:${opponent.name}`,
-    );
-
+    this.addToGameHistory(`${creature.name} vs ${opponent.name}`);
     this.battling();
   };
 
   battling = () => {
+    this.currentGameState = GAME_STATE.BATTLING;
     this.addToGameHistory('Battling');
     while (this.isGameOver != true) {
       this.getPlayersInput();
@@ -95,14 +100,16 @@ class Battle {
   };
 
   endBattle = () => {
+    this.currentGameState = GAME_STATE.ENDING;
     this.addToGameHistory('Game ended');
     this.isGameOver = true;
     // if both creatures die
-    const everyCreatureIsDead = this.listOfCreaturesInBattle.find((creature) =>
+    const isEveryCreatureDead = this.listOfCreaturesInBattle.every((creature) =>
       creature.isDead(),
     );
-    if (everyCreatureIsDead) {
+    if (isEveryCreatureDead) {
       this.addToGameHistory(`There was a Draw!`);
+      this.winner = null;
       return;
     }
     // if one creature dies
@@ -111,6 +118,7 @@ class Battle {
     );
     if (creatureWon) {
       this.addToGameHistory(`${creatureWon.name} Won the Game!`);
+      this.winner = creatureWon;
       return;
     }
   };

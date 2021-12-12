@@ -43,15 +43,25 @@ class Creature {
   getState = () => ({
     action: this.creatureCurrentAction,
     mode: this.creatureCurrentMode,
-    life: this.life,
   });
+
+  getStats = () => ({
+    id: this.id,
+    life: this.life,
+    name: this.name,
+    damageCapacity: this.damageCapacity,
+    ammunition: this.ammunition,
+    accuracy: this.accuracy,
+  });
+
+  overview = () => ({ ...this.getState(), ...this.getStats() });
 
   wasAttacked = (numOfAttacks = 1, amountOfDamage = 0) => {
     // if creature was attack while in defence
     let damageDoneToCurrentCreature = amountOfDamage + numOfAttacks;
 
     if (this.creatureCurrentAction === CREATURE_ACTION.DEFEND) {
-      this.addToCreatureGameHistory('Was in Defence when attacked');
+      this.addToCreatureGameHistory('Was in defence when attacked');
       damageDoneToCurrentCreature = 0.5;
     } else {
       // if creature was attack while not in defence
@@ -74,7 +84,7 @@ class Creature {
 
   attack = (opponentCreature) => {
     this.setAction(CREATURE_ACTION.ATTACK);
-    this.addToCreatureGameHistory('Is Attacking');
+    this.addToCreatureGameHistory('Is attacking');
     if (this.ammunition <= 0) {
       this.addToCreatureGameHistory('but has no ammunition');
       return;
@@ -92,14 +102,14 @@ class Creature {
 
   defend = () => {
     this.setAction(CREATURE_ACTION.DEFEND);
-    this.addToCreatureGameHistory('Is Defending');
+    this.addToCreatureGameHistory('Is defending');
   };
 
   recharge = () => {
     this.setAction(CREATURE_ACTION.RECHARGE);
     // creature gains ammo
     this.ammunition += 1;
-    this.addToCreatureGameHistory('Is Recharging');
+    this.addToCreatureGameHistory('Is recharging');
   };
 
   executeCreatureAction = (action, opponentCreature) => {
