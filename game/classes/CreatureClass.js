@@ -5,14 +5,22 @@ class Creature {
   id = generateRandomId();
   creatureCurrentAction = CREATURE_ACTION.NONE;
   creatureCurrentMode = CREATURE_MODE.IS_ALIVE;
+  isComputer = false;
   life = 5;
   history = [];
 
-  constructor(name, damageCapacity = 1, ammunition = 3, accuracy = 100) {
+  constructor(
+    name,
+    damageCapacity = 1,
+    ammunition = 3,
+    accuracy = 100,
+    isComputer = false,
+  ) {
     this.name = name;
     this.damageCapacity = damageCapacity;
     this.ammunition = ammunition;
     this.accuracy = accuracy;
+    this.isComputer = isComputer;
   }
 
   addToCreatureGameHistory = (action) => {
