@@ -1,8 +1,8 @@
-const { log } = require('../tools');
+const { log, generateRandomId } = require('../tools');
 const { CREATURE_ACTION, CREATURE_MODE } = require('../constants');
 
 class Creature {
-  id = null;
+  id = generateRandomId();
   creatureCurrentAction = CREATURE_ACTION.NONE;
   creatureCurrentMode = CREATURE_MODE.IS_ALIVE;
   life = 5;
@@ -13,7 +13,6 @@ class Creature {
     this.damageCapacity = damageCapacity;
     this.ammunition = ammunition;
     this.accuracy = accuracy;
-    this.id = Math.round(Math.random() * 1000);
   }
 
   addToCreatureGameHistory = (action) => {
@@ -22,6 +21,7 @@ class Creature {
   };
 
   isAttacking = () => this.creatureCurrentAction === CREATURE_ACTION.ATTACK;
+
   isDead = () => this.creatureCurrentMode === CREATURE_MODE.IS_DEAD;
 
   setAction = (action) => {

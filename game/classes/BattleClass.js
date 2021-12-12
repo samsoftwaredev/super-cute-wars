@@ -1,9 +1,10 @@
 const prompt = require('prompt-sync')({ sigint: true });
 const Arena = require('./ArenaClass');
-const { log } = require('../tools');
+const { log, generateRandomId } = require('../tools');
 const { CREATURE_ACTION } = require('../constants');
 
 class Battle {
+  gameId = generateRandomId();
   gameHistory = [];
   listOfCreaturesInBattle = [];
   isGameOver = false;
