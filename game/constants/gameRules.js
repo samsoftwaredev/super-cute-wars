@@ -1,5 +1,7 @@
 const GAME_RULES = {
   MAX_ROUNDS_PER_GAME: 15,
+  DAMAGE_WHILE_IN_DEFENCE: 0.5,
+  STANDARD_LIFE_NUMBER: 5,
 };
 
 module.exports = GAME_RULES;

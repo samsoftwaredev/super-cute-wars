@@ -1,4 +1,4 @@
-const { CREATURE_ACTION } = require('../constants');
+const { CREATURE_ACTION, GAME_RULES } = require('../constants');
 const Creature = require('./CreatureClass');
 
 class CompCreature extends Creature {
@@ -16,7 +16,20 @@ class CompCreature extends Creature {
     this.difficulty = difficulty;
   }
 
-  attackIfAmmoIsAvailable = () => this.ammunition > 0;
+  isAmmoAvailable = () => this.ammunition > 0;
+
+  isLastRoundLastAction = (opponentAmmunition) => {
+    // In last round the computer should attack or defend, but not recharge
+    const opponentHasAmmoToKill = opponentAmmunition > this.life;
+    const canSurviveInDefence = this.life > GAME_RULES.DAMAGE_WHILE_IN_DEFENCE;
+    if (
+      !this.isAmmoAvailable() ||
+      (opponentHasAmmoToKill && canSurviveInDefence)
+    ) {
+      return CREATURE_ACTION.DEFEND;
+    }
+    return CREATURE_ACTION.ATTACK;
+  };
 
   makeRandomDecision = () => {
     const validActions = Object.values(CREATURE_ACTION).filter(
@@ -27,13 +40,15 @@ class CompCreature extends Creature {
 
     if (action === CREATURE_ACTION.ATTACK) {
       // if creature doesn't have ammo, make another randomDecision
-      if (!this.attackIfAmmoIsAvailable()) return this.makeRandomDecision();
+      if (!this.isAmmoAvailable()) return this.makeRandomDecision();
     }
 
     return action;
   };
 
-  makeComputerDecision = (humanAction) => {
+  makeComputerDecision = (isHumanPlayer, isLastRound) => {
+    const { action: humanAction, ammunition: opponentAmmunition } =
+      isHumanPlayer.overview();
     const isSmart = Math.random() < this.difficulty.smartness / 100;
     console.log(
       'Computer played smart:',
@@ -42,12 +57,14 @@ class CompCreature extends Creature {
       this.difficulty.smartness,
     );
 
-    if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
+    if (isLastRound) {
+      this.setAction(this.isLastRoundLastAction(opponentAmmunition));
+    } else if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
       this.setAction(CREATURE_ACTION.DEFEND);
     } else if (isSmart && humanAction === CREATURE_ACTION.DEFEND) {
       this.setAction(CREATURE_ACTION.RECHARGE);
     } else if (isSmart && humanAction === CREATURE_ACTION.RECHARGE) {
-      const act = this.attackIfAmmoIsAvailable()
+      const act = this.isAmmoAvailable()
         ? CREATURE_ACTION.ATTACK
         : CREATURE_ACTION.RECHARGE;
       this.setAction(act);

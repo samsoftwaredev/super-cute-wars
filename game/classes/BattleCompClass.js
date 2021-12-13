@@ -11,7 +11,6 @@ class BattleComp extends Battle {
     const isHumanPlayer = this.listOfCreaturesInBattle.find(
       (c) => !c.isComputer,
     );
-    const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
 
     let playerInput = prompt(`
         ++++++++++++++++++ ${isHumanPlayer.name} ++++++++++++++++
@@ -31,8 +30,11 @@ class BattleComp extends Battle {
     } else {
       console.error(`You choose a valid action for ${isHumanPlayer.name}`);
     }
-    const { action: humanAction } = isHumanPlayer.overview();
-    isCompPlayer.makeComputerDecision(humanAction);
+
+    const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
+    const { round } = this.getGameState();
+    const isLastRound = round.gameRound === round.maxNumOfGameRounds;
+    isCompPlayer.makeComputerDecision(isHumanPlayer, isLastRound);
   };
 }
 

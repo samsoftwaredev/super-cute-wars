@@ -1,11 +1,11 @@
 const { log, generateRandomId } = require('../tools');
-const { CREATURE_ACTION, CREATURE_MODE } = require('../constants');
+const { CREATURE_ACTION, CREATURE_MODE, GAME_RULES } = require('../constants');
 
 class Creature {
   id = generateRandomId();
   creatureCurrentAction = CREATURE_ACTION.NONE;
   creatureCurrentMode = CREATURE_MODE.IS_ALIVE;
-  life = 5;
+  life = GAME_RULES.STANDARD_LIFE_NUMBER;
   history = [];
 
   constructor(name, damageCapacity = 1, ammunition = 3, accuracy = 100) {
@@ -62,7 +62,7 @@ class Creature {
 
     if (this.creatureCurrentAction === CREATURE_ACTION.DEFEND) {
       this.addToCreatureGameHistory('Was in defence when attacked');
-      damageDoneToCurrentCreature = 0.5;
+      damageDoneToCurrentCreature = GAME_RULES.DAMAGE_WHILE_IN_DEFENCE;
     } else {
       // if creature was attack while not in defence
       this.addToCreatureGameHistory('Was NOT in defence when attacked.');

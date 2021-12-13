@@ -27,8 +27,8 @@ class Battle {
 
   getGameState = () => ({
     round: {
-      currentGameRound: this.gameRound,
-      isMaxGameRoundReached: this.isMaxGameRoundReached,
+      gameRound: this.gameRound,
+      isMaxGameRoundReached: this.isMaxGameRoundReached(),
       maxNumOfGameRounds: GAME_RULES.MAX_ROUNDS_PER_GAME,
     },
     isGameOver: this.isGameOver,
