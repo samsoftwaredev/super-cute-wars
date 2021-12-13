@@ -73,7 +73,7 @@ class Creature {
     if (this.life <= 0) {
       this.addToCreatureGameHistory(`Is dead. HP ${this.life}`);
       this.creatureCurrentMode = CREATURE_MODE.IS_DEAD;
-    } else if (this.life === 1) {
+    } else if (this.life > 0 && this.life <= 1) {
       this.addToCreatureGameHistory(`Is fearful. HP ${this.life}`);
       this.creatureCurrentMode = CREATURE_MODE.IS_FEARFUL;
     } else {

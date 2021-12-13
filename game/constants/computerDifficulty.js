@@ -5,23 +5,23 @@ const COMPUTER_DIFFICULTY = {
   },
   LEGENDARY: {
     value: 'legendary',
-    smartness: 90,
+    smartness: 75,
   },
   HIGH: {
     value: 'high',
-    smartness: 80,
+    smartness: 50,
   },
   MEDIUM: {
     value: 'medium',
-    smartness: 50,
+    smartness: 30,
   },
   LOW: {
     value: 'low',
-    smartness: 40,
+    smartness: 20,
   },
   NOVICE: {
     value: 'novice',
-    smartness: 20,
+    smartness: 10,
   },
 };
 
