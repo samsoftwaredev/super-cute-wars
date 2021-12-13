@@ -1,7 +1,9 @@
-const killerCroc = require('./croc');
-const roboto = require('./roboto');
+const { compKillerCroc, killerCroc } = require('./croc');
+const { compRoboto, roboto } = require('./roboto');
 
 module.exports = {
   killerCroc,
   roboto,
+  compKillerCroc,
+  compRoboto,
 };

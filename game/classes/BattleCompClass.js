@@ -7,58 +7,32 @@ class BattleComp extends Battle {
     super(creatures, arena);
   }
 
-  getComputerInput = (isHumanPlayerCreature) => {
-    const isComputerPlayerCreature = this.getCreatureOpponent(
-      isHumanPlayerCreature,
-    );
-    const { ammunition: compAmmo } = isComputerPlayerCreature.overview();
-    const { action: humanAction } = isHumanPlayerCreature.overview();
-
-    const attackIfAmmoIsAvailable = () => {
-      if (compAmmo > 0) {
-        isComputerPlayerCreature.setAction(CREATURE_ACTION.ATTACK);
-      } else {
-        isComputerPlayerCreature.setAction(CREATURE_ACTION.RECHARGE);
-      }
-    };
-
-    if (humanAction === CREATURE_ACTION.ATTACK) {
-      isComputerPlayerCreature.setAction(CREATURE_ACTION.DEFEND);
-    } else if (humanAction === CREATURE_ACTION.DEFEND) {
-      isComputerPlayerCreature.setAction(CREATURE_ACTION.RECHARGE);
-    } else if (humanAction === CREATURE_ACTION.RECHARGE) {
-      attackIfAmmoIsAvailable();
-    } else {
-      attackIfAmmoIsAvailable();
-    }
-  };
-
   getPlayersInput = () => {
-    const isHumanPlayerCreature = this.listOfCreaturesInBattle.find(
+    const isHumanPlayer = this.listOfCreaturesInBattle.find(
       (c) => !c.isComputer,
     );
+    const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
 
     let playerInput = prompt(`
-        ++++++++++++++++++ ${isHumanPlayerCreature.name} ++++++++++++++++
-        life: ${isHumanPlayerCreature.life} | ammo: ${isHumanPlayerCreature.ammunition} 
-        Choose an action for ${isHumanPlayerCreature.name}:
+        ++++++++++++++++++ ${isHumanPlayer.name} ++++++++++++++++
+        life: ${isHumanPlayer.life} | ammo: ${isHumanPlayer.ammunition} 
+        Choose an action for ${isHumanPlayer.name}:
         \ta) Attack
         \td) Defend
         \tr) Recharge
         `);
 
     if (playerInput === 'a') {
-      isHumanPlayerCreature.setAction(CREATURE_ACTION.ATTACK);
+      isHumanPlayer.setAction(CREATURE_ACTION.ATTACK);
     } else if (playerInput === 'd') {
-      isHumanPlayerCreature.setAction(CREATURE_ACTION.DEFEND);
+      isHumanPlayer.setAction(CREATURE_ACTION.DEFEND);
     } else if (playerInput === 'r') {
-      isHumanPlayerCreature.setAction(CREATURE_ACTION.RECHARGE);
+      isHumanPlayer.setAction(CREATURE_ACTION.RECHARGE);
     } else {
-      console.error(
-        `You choose a valid action for ${isHumanPlayerCreature.name}`,
-      );
+      console.error(`You choose a valid action for ${isHumanPlayer.name}`);
     }
-    this.getComputerInput(isHumanPlayerCreature);
+    const { action: humanAction } = isHumanPlayer.overview();
+    isCompPlayer.makeComputerDecision(humanAction);
   };
 }
 
