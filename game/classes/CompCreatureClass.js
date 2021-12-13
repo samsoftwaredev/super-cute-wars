@@ -24,16 +24,23 @@ class CompCreature extends Creature {
     );
     const randomNum = Math.floor(Math.random() * validActions.length);
     const action = validActions[randomNum];
+
     if (action === CREATURE_ACTION.ATTACK) {
       // if creature doesn't have ammo, make another randomDecision
       if (!this.attackIfAmmoIsAvailable()) return this.makeRandomDecision();
     }
+
     return action;
   };
 
   makeComputerDecision = (humanAction) => {
     const isSmart = Math.random() < this.difficulty.smartness / 100;
-    console.log(isSmart, this.difficulty.smartness);
+    console.log(
+      'Computer played smart:',
+      isSmart,
+      ' Difficulty: ',
+      this.difficulty.smartness,
+    );
 
     if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
       this.setAction(CREATURE_ACTION.DEFEND);
