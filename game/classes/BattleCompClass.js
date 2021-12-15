@@ -33,8 +33,10 @@ class BattleComp extends Battle {
 
     const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
     const { round } = this.getGameState();
-    const isLastRound = round.gameRound === round.maxNumOfGameRounds;
-    isCompPlayer.makeComputerDecision(isHumanPlayer, isLastRound);
+    isCompPlayer.makeComputerDecision(
+      isHumanPlayer,
+      round.isMaxGameRoundReached,
+    );
   };
 }
 

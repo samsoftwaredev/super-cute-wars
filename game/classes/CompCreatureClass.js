@@ -47,7 +47,7 @@ class CompCreature extends Creature {
   };
 
   makeComputerDecision = (isHumanPlayer, isLastRound) => {
-    const { action: humanAction, ammunition: opponentAmmunition } =
+    const { action: humanAction, ammunition: opponentAmmo } =
       isHumanPlayer.overview();
     const isSmart = Math.random() < this.difficulty.smartness / 100;
     console.log(
@@ -58,7 +58,7 @@ class CompCreature extends Creature {
     );
 
     if (isLastRound) {
-      this.setAction(this.isLastRoundLastAction(opponentAmmunition));
+      this.setAction(this.isLastRoundLastAction(opponentAmmo));
     } else if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
       this.setAction(CREATURE_ACTION.DEFEND);
     } else if (isSmart && humanAction === CREATURE_ACTION.DEFEND) {
