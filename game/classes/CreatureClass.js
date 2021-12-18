@@ -115,6 +115,9 @@ class Creature {
       if (lastActionWasDefence && hasPowerShield) {
         // diminish power shield
         this.powerShield -= CREATURE_STATUS.POWER_SHIELD_USAGE;
+      } else if (lastActionWasDefence && !hasPowerShield) {
+        // power shield will remain 0 until the creature does different action
+        this.powerShield = 0;
       } else {
         // reset power shield to max - the current usage
         this.powerShield =
