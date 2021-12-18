@@ -5,14 +5,8 @@ class CompCreature extends Creature {
   isComputer = true;
   difficulty = null;
 
-  constructor(
-    name,
-    damageCapacity = 1,
-    ammunition = 3,
-    accuracy = 100,
-    difficulty,
-  ) {
-    super(name, damageCapacity, ammunition, accuracy);
+  constructor(name, ammunition = 3, accuracy = 100, difficulty) {
+    super(name, ammunition, accuracy);
     this.difficulty = difficulty;
   }
 
