@@ -4,9 +4,9 @@ const app = express();
 
 const BattleComp = require('./game/classes/BattleCompClass');
 const { compRoboto, killerCroc } = require('./game/creatures');
-const { getRandom } = require('./game/arenas');
+const { getRandomArena } = require('./game/arenas');
 
-const arena = getRandom();
+const arena = getRandomArena();
 const firstBattle = new BattleComp([compRoboto, killerCroc], arena);
 firstBattle.startBattle();
 

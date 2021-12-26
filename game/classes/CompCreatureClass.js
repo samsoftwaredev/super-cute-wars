@@ -12,6 +12,8 @@ class CompCreature extends Creature {
 
   isAmmoAvailable = () => this.ammunition > 0;
 
+  hasEnoughAmmoToKill = (opponentLife) => this.ammunition >= opponentLife;
+
   isLastRoundLastAction = (opponentAmmunition) => {
     // In last round the computer should attack or defend, but not recharge
     const opponentHasAmmoToKill = opponentAmmunition > this.life;
@@ -40,9 +42,18 @@ class CompCreature extends Creature {
     return action;
   };
 
+  shouldAttackOrDefend = (isSmart, humanAction) => {
+    return isSmart && humanAction === CREATURE_ACTION.ATTACK
+      ? CREATURE_ACTION.DEFEND
+      : CREATURE_ACTION.ATTACK;
+  };
+
   makeComputerDecision = (isHumanPlayer, isLastRound) => {
-    const { action: humanAction, ammunition: opponentAmmo } =
-      isHumanPlayer.overview();
+    const {
+      action: humanAction,
+      ammunition: opponentAmmo,
+      life: opponentLife,
+    } = isHumanPlayer.overview();
     const isSmart = Math.random() < this.difficulty.smartness / 100;
     console.log(
       'Computer played smart:',
@@ -53,6 +64,8 @@ class CompCreature extends Creature {
 
     if (isLastRound) {
       this.setAction(this.isLastRoundLastAction(opponentAmmo));
+    } else if (hasEnoughAmmoToKill(opponentLife)) {
+      this.setAction(this.shouldAttackOrDefend(isSmart, humanAction));
     } else if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
       this.setAction(CREATURE_ACTION.DEFEND);
     } else if (isSmart && humanAction === CREATURE_ACTION.DEFEND) {

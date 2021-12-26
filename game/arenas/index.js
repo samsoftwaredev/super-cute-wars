@@ -3,7 +3,7 @@ const swamp = require('./swamp');
 
 const arenas = { colosseum, swamp };
 
-const getRandom = () => {
+const getRandomArena = () => {
   const list = Object.values(arenas);
   const randomIndex = Math.abs(Math.round(Math.random() * list.length - 1));
   console.log('Random: ', randomIndex, list);
@@ -13,5 +13,5 @@ const getRandom = () => {
 
 module.exports = {
   ...arenas,
-  getRandom,
+  getRandomArena,
 };
