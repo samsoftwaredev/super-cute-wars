@@ -5,7 +5,8 @@ const arenas = { colosseum, swamp };
 
 const getRandom = () => {
   const list = Object.values(arenas);
-  const randomIndex = Math.round(Math.random() * list.length);
+  const randomIndex = Math.abs(Math.round(Math.random() * list.length - 1));
+  console.log('Random: ', randomIndex, list);
   const randomArena = list[randomIndex];
   return randomArena;
 };
