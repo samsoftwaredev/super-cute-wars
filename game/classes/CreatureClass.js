@@ -123,7 +123,7 @@ class Creature {
           CREATURE_STATUS.MAX_POWER_SHIELD - CREATURE_STATUS.POWER_SHIELD_USAGE;
       }
     }
-    this.logCreatureHistory('Power shield level: ' + this.powerShield);
+    this.logCreatureHistory(`Power shield level: ${this.powerShield}`);
   };
 
   recharge = () => {
