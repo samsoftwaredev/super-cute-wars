@@ -136,7 +136,7 @@ class Creature {
     if (action === CREATURE_ACTION.DEFEND) this.defend();
     else if (action === CREATURE_ACTION.ATTACK) this.attack(opponentCreature);
     else if (action === CREATURE_ACTION.RECHARGE) this.recharge();
-    else console.error(`Executing an invalid action: ${action}`);
+    else console.error(`${this.name} executing an invalid action: ${action}`);
   };
 }
 

@@ -64,7 +64,7 @@ class CompCreature extends Creature {
 
     if (isLastRound) {
       this.setAction(this.isLastRoundLastAction(opponentAmmo));
-    } else if (hasEnoughAmmoToKill(opponentLife)) {
+    } else if (this.hasEnoughAmmoToKill(opponentLife)) {
       this.setAction(this.shouldAttackOrDefend(isSmart, humanAction));
     } else if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
       this.setAction(CREATURE_ACTION.DEFEND);

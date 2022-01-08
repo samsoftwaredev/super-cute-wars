@@ -6,9 +6,12 @@
   "dependencies": {
     "express": "^4.17.1",
     "prompt-sync": "^4.2.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "ws": "^8.4.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",

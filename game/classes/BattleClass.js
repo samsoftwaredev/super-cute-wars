@@ -35,6 +35,7 @@ class Battle {
     winner: this.winner,
     creaturesBattling: this.listOfCreaturesInBattle.map((c) => c.overview()),
     gameState: this.currentGameState,
+    arena: this.arena,
   });
 
   addToGameHistory = (action) => {
@@ -102,10 +103,10 @@ class Battle {
     while (this.isGameOver != true) {
       this.getPlayersInput();
       this.executePlayersAction();
-      const creatureDied = this.listOfCreaturesInBattle.some((creature) =>
+      const isCreatureDead = this.listOfCreaturesInBattle.some((creature) =>
         creature.isDead(),
       );
-      if (creatureDied || this.isMaxGameRoundReached()) {
+      if (isCreatureDead || this.isMaxGameRoundReached()) {
         this.endBattle();
       } else {
         this.increaseGameRound();
