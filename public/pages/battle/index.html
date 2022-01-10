@@ -13,36 +13,89 @@
 <body>
   <h1>Battle</h1>
   <div>
-    <p>What will {creature_name} do?</p>
-    <!-- <ul>
-            <li></li>
-        </ul> -->
+    <div id="opponent-creature">
+      <h4>Opponent</h4>
+      <div>Name: <span id="opponent-creature-name"></span></div>
+      <div>Life: <span id="opponent-creature-life"></span></div>
+      <div>Shield: <span id="opponent-creature-shield"></span></div>
+      <div>Ammo: <span id="opponent-creature-ammo"></span></div>
+    </div>
+    <div id="my-creature">
+      <div>Name: <span class="my-creature-name"></span></div>
+      <div>Life: <span id="my-creature-life"></span></div>
+      <div>Shield: <span id="my-creature-shield"></span></div>
+      <div>Ammo: <span id="my-creature-ammo"></span></div>
+    </div>
+    <p>What will <span class="my-creature-name"></span> do?</p>
+    <ul>
+      <li>
+        <button onclick="executeAction('a')">Attack</button>
+        <button onclick="executeAction('d')">Defend</button>
+        <button onclick="executeAction('r')">Recharge</button>
+      </li>
+    </ul>
   </div>
-  <div>
+  <div id="settings">
     <button>Close</button>
     <h4>Settings</h4>
-    <ul>
+    <ul id="setting-options">
       <li>Sound</li>
       <li>Music</li>
       <li>
-        <button>Concede Battle</button>
+        <a href="/" type="button">Concede Battle</a>
       </li>
     </ul>
   </div>
   <script>
-    // Create WebSocket connection.
-    const clientId = null;
-    const socket = new WebSocket('ws://localhost:8080');
-    // Connection opened
-    socket.addEventListener('open', (event) => {
-      socket.send(JSON.stringify({ playerInput: 'a' }));
-    });
+    const gameId = localStorage.getItem("gameId");
 
-    // Listen for messages
-    socket.addEventListener('message', (event) => {
-      console.log('Message from server ', JSON.parse(event.data));
-    });
+    const setCreatureStats = (creatures) => {
+      const opponent = creatures.find(c => c.isComputer);
+      const player = creatures.find(c => !c.isComputer);
+      document.querySelector("#opponent-creature-name").innerHTML = opponent.name;
+      document.querySelector("#opponent-creature-life").innerHTML = opponent.life;
+      document.querySelector("#opponent-creature-shield").innerHTML = opponent.powerShield;
+      document.querySelector("#opponent-creature-ammo").innerHTML = opponent.ammunition;
 
+      document.querySelectorAll(".my-creature-name").forEach(i => i.innerHTML = player.name);
+      document.querySelector("#my-creature-life").innerHTML = player.life;
+      document.querySelector("#my-creature-shield").innerHTML = player.powerShield;
+      document.querySelector("#my-creature-ammo").innerHTML = player.ammunition;
+    }
+
+    const init = () => {
+      fetch(`battle/status/${gameId}`, {
+        method: 'POST',
+      }).then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const { isGameOver, creaturesBattling: creatures } = data.game;
+          setCreatureStats(creatures)
+          if (isGameOver) localStorage.removeItem("gameId");
+          if (gameId === null) window.location.href = '/'
+        });
+    }
+
+    const executeAction = (option) => {
+      const body = { playerInput: option };
+      fetch(`battle/${gameId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }).then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const { isGameOver, creaturesBattling: creatures } = data.game;
+          setCreatureStats(creatures)
+          if (isGameOver) {
+            localStorage.clear("gameId");
+          }
+        });
+    }
+
+    init()
   </script>
 </body>
 

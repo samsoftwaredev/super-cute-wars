@@ -31,6 +31,11 @@ class Battle {
       isMaxGameRoundReached: this.isMaxGameRoundReached(),
       maxNumOfGameRounds: GAME_RULES.MAX_ROUNDS_PER_GAME,
     },
+    playerOptions: {
+      a: CREATURE_ACTION.ATTACK,
+      r: CREATURE_ACTION.RECHARGE,
+      d: CREATURE_ACTION.DEFEND,
+    },
     isGameOver: this.isGameOver,
     winner: this.winner,
     creaturesBattling: this.listOfCreaturesInBattle.map((c) => c.overview()),
@@ -56,11 +61,11 @@ class Battle {
       \td) Defend
       \tr) Recharge
       `);
-      if (playerInput === 'a') {
+      if (playerInput === CREATURE_ACTION.ATTACK) {
         creature.setAction(CREATURE_ACTION.ATTACK);
-      } else if (playerInput === 'd') {
+      } else if (playerInput === CREATURE_ACTION.DEFEND) {
         creature.setAction(CREATURE_ACTION.DEFEND);
-      } else if (playerInput === 'r') {
+      } else if (playerInput === CREATURE_ACTION.RECHARGE) {
         creature.setAction(CREATURE_ACTION.RECHARGE);
       } else {
         console.error(`You choose a valid action for ${creature.name}`);

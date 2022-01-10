@@ -3,43 +3,51 @@ const Battle = require('./BattleClass');
 class BattleComp extends Battle {
   playerInput = null;
   timerToEnterInput = null;
-  timeToWaitForPlayerInput = 5000;
+  callback = null;
+  timeToWaitForPlayerInput = 1000;
 
   constructor(creatures, arena) {
     super(creatures, arena);
   }
 
-  setPlayerInput = (playerInput) => {
+  setPlayerInput = (playerInput, callback) => {
     this.playerInput = playerInput;
+    this.callback = callback;
   };
 
-  getPlayersInput = async () => {
+  getPlayerInput = async () => {
     let id = null;
-    let timeLeft = this.timeToWaitForPlayerInput;
     return new Promise((resolve, reject) => {
-      id = setTimeout(() => {
-        timeLeft -= 1;
-        resolve(this.playerInput);
+      id = setInterval(() => {
+        const playerSelectedOption = this.playerInput !== null;
+
+        if (playerSelectedOption) {
+          resolve(this.playerInput);
+          this.playerInput = null;
+          clearInterval(id);
+        }
+
+        if (this.isGameOver) {
+          clearInterval(id);
+        }
       }, this.timeToWaitForPlayerInput);
-      if (timeLeft <= 0) clearTimeout(id);
     });
   };
-  setPlayersActions = () => {
+
+  setPlayerActions = (humanAction) => {
     const { round } = this.getGameState();
     const notComp = (c) => !c.isComputer;
     const isHumanPlayer = this.listOfCreaturesInBattle.find(notComp);
     const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
 
-    if (this.playerInput === 'a') {
+    if (humanAction === CREATURE_ACTION.ATTACK) {
       isHumanPlayer.setAction(CREATURE_ACTION.ATTACK);
-    } else if (this.playerInput === 'd') {
+    } else if (humanAction === CREATURE_ACTION.DEFEND) {
       isHumanPlayer.setAction(CREATURE_ACTION.DEFEND);
-    } else if (this.playerInput === 'r') {
+    } else if (humanAction === CREATURE_ACTION.RECHARGE) {
       isHumanPlayer.setAction(CREATURE_ACTION.RECHARGE);
     } else {
-      console.error(
-        `Human player choose an invalid action "${this.playerInput}"`,
-      );
+      console.error(`Human player choose an invalid action "${humanAction}"`);
     }
 
     isCompPlayer.makeComputerDecision(
@@ -49,33 +57,33 @@ class BattleComp extends Battle {
 
     console.log(`
       ++++++++++++++++++ ${isCompPlayer.name} ++++++++++++++++
-      life: ${isCompPlayer.life} | ammo: ${isCompPlayer.ammunition} 
-      Choose an action for ${isCompPlayer.name}:
+      life: ${isCompPlayer.life} | ammo: ${isCompPlayer.ammunition}
       ++++++++++++++++++ ${isHumanPlayer.name} ++++++++++++++++
-      life: ${isHumanPlayer.life} | ammo: ${isHumanPlayer.ammunition} 
-      Choose an action for ${isHumanPlayer.name}:`);
+      life: ${isHumanPlayer.life} | ammo: ${isHumanPlayer.ammunition}
+    `);
   };
 
   battling = async () => {
-    if (this.currentGameState === GAME_STATE.BATTLING) {
+    const alreadyInBattle = this.currentGameState === GAME_STATE.BATTLING;
+    if (alreadyInBattle) {
       this.currentGameState = GAME_STATE.BATTLING;
       this.addToGameHistory('Battling');
     }
 
-    // wait for 10 second for player's input, then continue program
-    await this.getPlayersInput();
-    this.setPlayersActions();
+    // wait for player's input, then continue the program
+    const humanAction = await this.getPlayerInput();
+    this.setPlayerActions(humanAction);
     this.executePlayersAction();
-
-    const isCreatureDead = this.listOfCreaturesInBattle.some((creature) =>
-      creature.isDead(),
-    );
+    const isDead = (creature) => creature.isDead();
+    const isCreatureDead = this.listOfCreaturesInBattle.some(isDead);
     if (isCreatureDead || this.isMaxGameRoundReached()) {
       this.endBattle();
+      this.callback();
       // exit
       return;
     } else {
       this.increaseGameRound();
+      this.callback();
     }
     this.battling();
   };

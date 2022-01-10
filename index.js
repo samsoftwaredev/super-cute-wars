@@ -1,5 +1,4 @@
 const express = require('express');
-const WebSocket = require('ws');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
@@ -8,55 +7,64 @@ const { compRoboto, killerCroc } = require('./game/creatures');
 const { getRandomArena } = require('./game/arenas');
 
 const PORT = 3000;
-const WS_PORT = 8080;
 
 const app = express();
-
 app.use(express.static(path.join(__dirname + '/public')));
+app.use(express.json());
 
-const server = new WebSocket.Server({ port: WS_PORT }, () =>
-  console.log('Web socket listening on ' + WS_PORT),
-);
-
-let clients = {};
-server.on('connection', (socket) => {
-  const clientId = uuidv4();
-  const battle = new BattleComp([compRoboto, killerCroc], getRandomArena());
+let games = {};
+app.post('/battle/start', (req, res) => {
+  const id = uuidv4();
+  // TODO: pass in players creature selection
+  const battle = new BattleComp([compRoboto(), killerCroc()], getRandomArena());
   battle.startBattle();
+  games[id] = { battle };
 
   const payload = {
-    clientId,
+    id,
     game: battle.getGameState(),
   };
 
-  clients[clientId] = {
-    socket,
+  res.json(payload);
+});
+
+app.post('/battle/status/:id', (req, res) => {
+  const { id } = req.params;
+  const { battle } = games[id];
+
+  const payload = {
+    id,
+    game: battle.getGameState(),
   };
 
-  // When you receive a message, send that message to every socket.
-  socket.on('message', function message(message) {
-    const result = JSON.parse(message);
-    console.log(result);
-    battle.setPlayerInput(result.playerInput);
-    socket.send(JSON.stringify(payload));
-  });
-  // When a socket closes, or disconnects, remove it from the array.
-  socket.on('close', () => {
-    // const clientsArr = Object.values(clientsArr)
-    // sockets = clientsArr.filter((c) => c !== socket);
-    // console.log('sockets:', clients.length);
+  res.json(payload);
+});
+
+app.post('/battle/:id', async (req, res) => {
+  // players input
+  const { id } = req.params;
+  const { playerInput } = req.body;
+  const { battle } = games[id];
+
+  battle.setPlayerInput(playerInput, () => {
+    const payload = {
+      id,
+      game: battle.getGameState(),
+    };
+
+    res.json(payload);
   });
 });
 
-app.get('/battle', function (req, res) {
+app.get('/battle', (req, res) => {
   res.sendFile(path.join(__dirname + '/public/pages/battle/index.html'));
 });
 
-app.get('/waiting-room', function (req, res) {
+app.get('/waiting-room', (req, res) => {
   res.sendFile(path.join(__dirname + '/public/pages/waitingRoom/index.html'));
 });
 
-app.get('*', function (req, res) {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/public/pages/notFound/index.html'));
 });
 

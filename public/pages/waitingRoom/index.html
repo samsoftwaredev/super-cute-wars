@@ -12,7 +12,17 @@
 
 <body>
   <h1>Waiting Room</h1>
-  <script src="index.js"></script>
+  <script>
+    fetch(`battle/start`, {
+      method: 'POST',
+    }).then(response => response.json())
+      .then(data => {
+        const gameId = data.id;
+        localStorage.removeItem("gameId");
+        localStorage.setItem("gameId", gameId);
+        window.location.href = `battle`
+      });
+  </script>
 </body>
 
 </html>

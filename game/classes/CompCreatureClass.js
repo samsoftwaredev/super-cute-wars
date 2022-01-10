@@ -10,6 +10,16 @@ class CompCreature extends Creature {
     this.difficulty = difficulty;
   }
 
+  getStats = () => ({
+    id: this.id,
+    life: this.life,
+    name: this.name,
+    ammunition: this.ammunition,
+    accuracy: this.accuracy,
+    powerShield: this.powerShield,
+    isComputer: true,
+  });
+
   isAmmoAvailable = () => this.ammunition > 0;
 
   hasEnoughAmmoToKill = (opponentLife) => this.ammunition >= opponentLife;
