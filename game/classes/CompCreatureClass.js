@@ -1,4 +1,8 @@
-const { CREATURE_ACTION, GAME_RULES } = require('../constants');
+const {
+  CREATURE_ACTION,
+  GAME_RULES,
+  CREATURE_STATUS,
+} = require('../constants');
 const Creature = require('./CreatureClass');
 
 class CompCreature extends Creature {

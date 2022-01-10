@@ -60,6 +60,11 @@ class Creature {
 
   overview = () => ({ ...this.getState(), ...this.getStats() });
 
+  regeneratePowerShield = () => {
+    // reset power shield to max - the current usage
+    this.powerShield = CREATURE_STATUS.MAX_POWER_SHIELD;
+  };
+
   wasAttacked = (numOfAttacks = 1) => {
     // if creature was attack while in defence
     let damageDoneToCurrentCreature = numOfAttacks;
@@ -88,7 +93,7 @@ class Creature {
   };
 
   attack = (opponentCreature) => {
-    this.setAction(CREATURE_ACTION.ATTACK);
+    this.regeneratePowerShield();
     if (this.ammunition <= 0) {
       this.logCreatureHistory('but has no ammunition');
       return;
@@ -105,29 +110,27 @@ class Creature {
   };
 
   defend = () => {
-    this.setAction(CREATURE_ACTION.DEFEND);
-    const copyHistory = [...this.history];
-    if (copyHistory.length > 0) {
-      const lastAction = copyHistory.pop();
+    if (this.history.length > 2) {
+      const lastAction = this.history[this.history.length - 2];
       const lastActionWasDefence = lastAction === CREATURE_ACTION.DEFEND;
       const hasPowerShield = this.powerShield > 0;
-      if (lastActionWasDefence && hasPowerShield) {
+      if (hasPowerShield) {
         // diminish power shield
         this.powerShield -= CREATURE_STATUS.POWER_SHIELD_USAGE;
       } else if (lastActionWasDefence && !hasPowerShield) {
         // power shield will remain 0 until the creature does a different action
         this.powerShield = 0;
       } else {
-        // reset power shield to max - the current usage
-        this.powerShield =
-          CREATURE_STATUS.MAX_POWER_SHIELD - CREATURE_STATUS.POWER_SHIELD_USAGE;
+        this.regeneratePowerShield();
       }
+    } else {
+      this.powerShield -= CREATURE_STATUS.POWER_SHIELD_USAGE;
     }
     this.logCreatureHistory(`Power shield level: ${this.powerShield}`);
   };
 
   recharge = () => {
-    this.setAction(CREATURE_ACTION.RECHARGE);
+    this.regeneratePowerShield();
     // creature gains ammo
     this.ammunition += 1;
   };

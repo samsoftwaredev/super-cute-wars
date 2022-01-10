@@ -13,15 +13,18 @@
 <body>
   <h1>Waiting Room</h1>
   <script>
-    fetch(`battle/start`, {
-      method: 'POST',
-    }).then(response => response.json())
-      .then(data => {
-        const gameId = data.id;
-        localStorage.removeItem("gameId");
-        localStorage.setItem("gameId", gameId);
-        window.location.href = `battle`
-      });
+    localStorage.removeItem("gameId");
+    const init = () => {
+      fetch(`battle/start`, {
+        method: 'POST',
+      }).then(response => response.json())
+        .then(data => {
+          const gameId = data.id;
+          localStorage.setItem("gameId", gameId);
+          window.location.href = `battle`
+        });
+    }
+    init();
   </script>
 </body>
 
