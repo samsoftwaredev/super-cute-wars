@@ -11,7 +11,6 @@ class CompCreature extends Creature {
 
   isLastRoundLastAction = (opponentAmmunition) => {
     // In last round the computer should attack or defend, but not recharge
-
     if (
       !this.isAmmoAvailable() ||
       this.canSurviveAttack(this.life, this.powerShield, opponentAmmunition)
@@ -21,7 +20,7 @@ class CompCreature extends Creature {
     return CREATURE_ACTION.ATTACK;
   };
 
-  makeRandomActionExcluding = (excludedActions) => {
+  makeRandomActionExcluding = (excludedActions = []) => {
     const allActions = Object.values(CREATURE_ACTION);
     const invalidActions = [...excludedActions, CREATURE_ACTION.NONE];
     const validActions = allActions.filter((a) => {
@@ -32,13 +31,11 @@ class CompCreature extends Creature {
     const randomNum = Math.floor(Math.random() * validActions.length);
     const action = validActions[randomNum];
 
-    if (action === CREATURE_ACTION.ATTACK) {
-      // if creature doesn't have ammo, make another randomDecision
-      if (!this.isAmmoAvailable())
-        return this.makeRandomActionExcluding([
-          ...excludedActions,
-          CREATURE_ACTION.ATTACK,
-        ]);
+    if (action === CREATURE_ACTION.ATTACK && !this.isAmmoAvailable()) {
+      return this.makeRandomActionExcluding([
+        ...invalidActions,
+        CREATURE_ACTION.ATTACK,
+      ]);
     }
 
     return action;
@@ -50,14 +47,12 @@ class CompCreature extends Creature {
       if (opponentHasAmmo) return CREATURE_ACTION.DEFEND;
       return this.makeRandomActionExcluding([CREATURE_ACTION.DEFEND]);
     } else if (action === CREATURE_ACTION.DEFEND) {
-      console.log(opponentLife, opponentShield, this.ammunition);
       const willSurviveAttack = this.canSurviveAttack(
         opponentLife,
         opponentShield,
         this.ammunition,
       );
       if (!willSurviveAttack) return CREATURE_ACTION.ATTACK;
-      // if (this.isAmmoAvailable()) return CREATURE_ACTION.ATTACK;
       return CREATURE_ACTION.RECHARGE;
     } else if (action === CREATURE_ACTION.RECHARGE) {
       return this.isAmmoAvailable()
