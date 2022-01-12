@@ -3,7 +3,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const BattleComp = require('./game/classes/BattleCompClass');
-const { compRoboto, killerCroc } = require('./game/creatures');
+const { compRobotoAttacker, killerCroc } = require('./game/creatures');
 const { getRandomArena } = require('./game/arenas');
 
 const PORT = 3000;
@@ -16,7 +16,10 @@ let games = {};
 app.post('/battle/start', (req, res) => {
   const id = uuidv4();
   // TODO: pass in players creature selection
-  const battle = new BattleComp([compRoboto(), killerCroc()], getRandomArena());
+  const battle = new BattleComp(
+    [compRobotoAttacker(), killerCroc()],
+    getRandomArena(),
+  );
   battle.startBattle();
   games[id] = { battle };
 

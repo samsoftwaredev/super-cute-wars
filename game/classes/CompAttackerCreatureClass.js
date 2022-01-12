@@ -1,16 +1,14 @@
-const { CREATURE_ACTION } = require('../../constants');
-const CompCreature = require('../CompCreatureClass');
+const { CREATURE_ACTION } = require('../constants');
+const CompCreature = require('./CompCreatureClass');
 
 class CompAttackerCreature extends CompCreature {
   constructor(name, ammunition, accuracy, difficulty) {
     super(name, ammunition, accuracy, difficulty);
   }
 
-  isLastRoundLastAction = () => {
-    return CREATURE_ACTION.ATTACK;
-  };
+  isLastRoundLastAction = () => CREATURE_ACTION.ATTACK;
 
-  getSmartAction = (action, opponentAmmo, opponentLife, opponentShield) => {
+  getSmartAction = (action) => {
     if (action === CREATURE_ACTION.ATTACK) {
       return this.makeRandomActionExcluding([CREATURE_ACTION.DEFEND]);
     } else if (
@@ -26,4 +24,4 @@ class CompAttackerCreature extends CompCreature {
   };
 }
 
-module.exports = CompCreature;
+module.exports = CompAttackerCreature;
