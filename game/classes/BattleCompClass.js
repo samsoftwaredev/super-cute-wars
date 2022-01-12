@@ -36,7 +36,7 @@ class BattleComp extends Battle {
 
   setPlayerActions = (humanAction) => {
     const { round } = this.getGameState();
-    const notComp = (c) => !c.isComputer;
+    const notComp = (c) => !c.isComputerPlayer;
     const isHumanPlayer = this.listOfCreaturesInBattle.find(notComp);
     const isCompPlayer = this.getCreatureOpponent(isHumanPlayer);
 

@@ -50,8 +50,8 @@
     const gameId = localStorage.getItem("gameId");
 
     const setCreatureStats = (creatures) => {
-      const opponent = creatures.find(c => c.isComputer);
-      const player = creatures.find(c => !c.isComputer);
+      const opponent = creatures.find(c => c.isComputerPlayer);
+      const player = creatures.find(c => !c.isComputerPlayer);
       document.querySelector("#opponent-creature-name").innerHTML = opponent.name;
       document.querySelector("#opponent-creature-life").innerHTML = opponent.life;
       document.querySelector("#opponent-creature-shield").innerHTML = opponent.powerShield;

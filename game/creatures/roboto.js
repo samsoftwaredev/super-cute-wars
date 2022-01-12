@@ -4,6 +4,6 @@ const { COMPUTER_DIFFICULTY } = require('../constants');
 
 const roboto = () => new Creature('Roboto Mustachon', 2, 100, true);
 const compRoboto = () =>
-  new CompCreature('Roboto Mustachon', 2, 100, COMPUTER_DIFFICULTY.LEGENDARY);
+  new CompCreature('Roboto Mustachon', 2, 100, COMPUTER_DIFFICULTY.IMPOSSIBLE);
 
 module.exports = { compRoboto, roboto };

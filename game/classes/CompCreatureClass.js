@@ -1,65 +1,71 @@
-const {
-  CREATURE_ACTION,
-  GAME_RULES,
-  CREATURE_STATUS,
-} = require('../constants');
+const { CREATURE_ACTION } = require('../constants');
 const Creature = require('./CreatureClass');
 
 class CompCreature extends Creature {
-  isComputer = true;
   difficulty = null;
 
   constructor(name, ammunition = 3, accuracy = 100, difficulty) {
-    super(name, ammunition, accuracy);
+    super(name, ammunition, accuracy, true);
     this.difficulty = difficulty;
   }
 
-  getStats = () => ({
-    id: this.id,
-    life: this.life,
-    name: this.name,
-    ammunition: this.ammunition,
-    accuracy: this.accuracy,
-    powerShield: this.powerShield,
-    isComputer: true,
-  });
-
-  isAmmoAvailable = () => this.ammunition > 0;
-
-  hasEnoughAmmoToKill = (opponentLife) => this.ammunition >= opponentLife;
-
   isLastRoundLastAction = (opponentAmmunition) => {
     // In last round the computer should attack or defend, but not recharge
-    const opponentHasAmmoToKill = opponentAmmunition > this.life;
-    const canSurviveInDefence = this.life > GAME_RULES.DAMAGE_WHILE_IN_DEFENCE;
+
     if (
       !this.isAmmoAvailable() ||
-      (opponentHasAmmoToKill && canSurviveInDefence)
+      this.canSurviveAttack(this.life, this.powerShield, opponentAmmunition)
     ) {
       return CREATURE_ACTION.DEFEND;
     }
     return CREATURE_ACTION.ATTACK;
   };
 
-  makeRandomDecision = () => {
-    const validActions = Object.values(CREATURE_ACTION).filter(
-      (a) => a != CREATURE_ACTION.NONE,
-    );
+  makeRandomActionExcluding = (excludedActions) => {
+    const allActions = Object.values(CREATURE_ACTION);
+    const invalidActions = [...excludedActions, CREATURE_ACTION.NONE];
+    const validActions = allActions.filter((a) => {
+      const isFound = invalidActions.indexOf(a);
+      return isFound === -1;
+    });
+
     const randomNum = Math.floor(Math.random() * validActions.length);
     const action = validActions[randomNum];
 
     if (action === CREATURE_ACTION.ATTACK) {
       // if creature doesn't have ammo, make another randomDecision
-      if (!this.isAmmoAvailable()) return this.makeRandomDecision();
+      if (!this.isAmmoAvailable())
+        return this.makeRandomActionExcluding([
+          ...excludedActions,
+          CREATURE_ACTION.ATTACK,
+        ]);
     }
 
     return action;
   };
 
-  shouldAttackOrDefend = (isSmart, humanAction) => {
-    return isSmart && humanAction === CREATURE_ACTION.ATTACK
-      ? CREATURE_ACTION.DEFEND
-      : CREATURE_ACTION.ATTACK;
+  getSmartAction = (action, opponentAmmo, opponentLife, opponentShield) => {
+    const opponentHasAmmo = opponentAmmo > 0;
+    if (action === CREATURE_ACTION.ATTACK) {
+      if (opponentHasAmmo) return CREATURE_ACTION.DEFEND;
+      return this.makeRandomActionExcluding([CREATURE_ACTION.DEFEND]);
+    } else if (action === CREATURE_ACTION.DEFEND) {
+      console.log(opponentLife, opponentShield, this.ammunition);
+      const willSurviveAttack = this.canSurviveAttack(
+        opponentLife,
+        opponentShield,
+        this.ammunition,
+      );
+      if (!willSurviveAttack) return CREATURE_ACTION.ATTACK;
+      // if (this.isAmmoAvailable()) return CREATURE_ACTION.ATTACK;
+      return CREATURE_ACTION.RECHARGE;
+    } else if (action === CREATURE_ACTION.RECHARGE) {
+      return this.isAmmoAvailable()
+        ? CREATURE_ACTION.ATTACK
+        : CREATURE_ACTION.RECHARGE;
+    } else {
+      return CREATURE_ACTION.RECHARGE;
+    }
   };
 
   makeComputerDecision = (isHumanPlayer, isLastRound) => {
@@ -67,7 +73,14 @@ class CompCreature extends Creature {
       action: humanAction,
       ammunition: opponentAmmo,
       life: opponentLife,
+      powerShield: opponentShield,
     } = isHumanPlayer.overview();
+    const smartAction = this.getSmartAction(
+      humanAction,
+      opponentAmmo,
+      opponentLife,
+      opponentShield,
+    );
     const isSmart = Math.random() < this.difficulty.smartness / 100;
     console.log(
       'Computer played smart:',
@@ -78,19 +91,10 @@ class CompCreature extends Creature {
 
     if (isLastRound) {
       this.setAction(this.isLastRoundLastAction(opponentAmmo));
-    } else if (this.hasEnoughAmmoToKill(opponentLife)) {
-      this.setAction(this.shouldAttackOrDefend(isSmart, humanAction));
-    } else if (isSmart && humanAction === CREATURE_ACTION.ATTACK) {
-      this.setAction(CREATURE_ACTION.DEFEND);
-    } else if (isSmart && humanAction === CREATURE_ACTION.DEFEND) {
-      this.setAction(CREATURE_ACTION.RECHARGE);
-    } else if (isSmart && humanAction === CREATURE_ACTION.RECHARGE) {
-      const act = this.isAmmoAvailable()
-        ? CREATURE_ACTION.ATTACK
-        : CREATURE_ACTION.RECHARGE;
-      this.setAction(act);
+    } else if (isSmart) {
+      this.setAction(smartAction);
     } else {
-      this.setAction(this.makeRandomDecision());
+      this.setAction(this.makeRandomActionExcluding([smartAction]));
     }
   };
 }
