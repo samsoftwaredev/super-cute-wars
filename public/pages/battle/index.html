@@ -11,6 +11,10 @@
 </head>
 
 <body>
+  <audio autoplay controls loop src="/assets/audio/music/bensound-highoctane.mp3">
+    Your browser does not support the audio element.
+  </audio>
+
   <div class="nav">
     <div class="setting-container">
       <button class="setting-button" onclick="toggleSettingModal()">
@@ -33,7 +37,7 @@
   </div>
   <div class="battle-ground">
     <div id="my-creature">
-      <div class="creature-stats">
+      <div class="creature-stats box-container">
         <div class="creature-name-container">
           <span class="my-creature-name"></span>
           <div>
@@ -53,7 +57,7 @@
         </div>
       </div>
     </div>
-    <div id="opponent-creature" class="creature-stats">
+    <div id="opponent-creature" class="creature-stats box-container">
       <div class="creature-name-container">
         <span id="opponent-creature-name"></span>
         <div>
@@ -74,7 +78,7 @@
       </div>
     </div>
   </div>
-  <div id="control-actions">
+  <div id="control-actions" class="box-container">
     <p>What will <span class="my-creature-name"></span> do?</p>
     <ul>
       <li>
@@ -123,7 +127,7 @@
       document.body.style.backgroundRepeat = 'no-repeat';
       document.body.style.backgroundAttachment = 'fixed';
       document.body.style.backgroundPosition = 'center';
-      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundSize = 'cover';
     }
 
     const init = () => {
@@ -162,7 +166,7 @@
         });
     }
 
-    init()
+    init();
   </script>
 </body>
 
