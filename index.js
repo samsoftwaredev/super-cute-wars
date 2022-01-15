@@ -7,7 +7,7 @@ const BattleComp = require('./game/classes/BattleCompClass');
 const { compRobotoAttacker, killerCroc } = require('./game/creatures');
 const { getRandomArena } = require('./game/arenas');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.static(path.join(__dirname + '/public')));
