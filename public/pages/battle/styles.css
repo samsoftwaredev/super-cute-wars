@@ -34,6 +34,11 @@ body {
   border-radius: 5px;
 }
 
+.creature-name-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* 
 *
 * Settings
@@ -77,6 +82,11 @@ body {
   background-color: red;
 }
 
+.setting-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* 
 *
 * Meter
@@ -89,8 +99,12 @@ body {
   position: relative;
   background: #555;
   border-radius: 25px;
-  padding: 1px;
+  padding: 3px;
   box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.meter.md {
+  height: 10px;
 }
 
 .meter > span {

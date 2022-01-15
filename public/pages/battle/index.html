@@ -17,8 +17,10 @@
         <img class="setting-icon" src="../../assets/images/settings-icon.png" />
       </button>
       <div id="setting-modal" class="setting-content">
-        <button onclick="toggleSettingModal()">x</button>
-        <h4>Settings</h4>
+        <div class="setting-header">
+          <span>Settings</span>
+          <button onclick="toggleSettingModal()">x</button>
+        </div>
         <ul id="setting-options">
           <li>Sound</li>
           <li>Music</li>
@@ -32,41 +34,43 @@
   <div class="battle-ground">
     <div id="my-creature">
       <div class="creature-stats">
-        <div>Name: <span class="my-creature-name"></span></div>
-        <div>Life:
-          <div class="meter orange nostripes">
-            <span id="my-creature-life" class="meter-danger"></span>
-          </div>
-        </div>
-        <div>Shield:
-          <div class="meter orange nostripes">
-            <span id="my-creature-shield" class="meter-primary"></span>
+        <div class="creature-name-container">
+          <span class="my-creature-name"></span>
+          <div>
+            <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+            <span id="my-creature-ammo"></span>
           </div>
         </div>
         <div>
-          <img style="height: 15px;" src="../../assets/images/attack-icon.png">
-          <span id="my-creature-ammo"></span>
+          <div class="meter md">
+            <span id="my-creature-life" class="meter-danger"></span>
+          </div>
+        </div>
+        <div>
+          <div class="meter">
+            <span id="my-creature-shield" class="meter-primary"></span>
+          </div>
         </div>
       </div>
     </div>
     <div id="opponent-creature" class="creature-stats">
-      <h4>Opponent</h4>
-      <div>Name: <span id="opponent-creature-name"></span></div>
-      <div>Life:
-        <div class="meter orange nostripes">
+      <div class="creature-name-container">
+        <span id="opponent-creature-name"></span>
+        <div>
+          <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+          <span id="opponent-creature-ammo"></span>
+        </div>
+      </div>
+      <div>
+        <div class="meter md">
           <span id="opponent-creature-life" class="meter-danger"></span>
         </div>
         </span>
       </div>
       <div>
-        Shield:
-        <div class="meter orange nostripes">
+        <div class="meter">
           <span id="opponent-creature-shield" class="meter-primary"></span>
         </div>
-      </div>
-      <div>
-        <img style="height: 15px;" src="../../assets/images/attack-icon.png">
-        <span id="opponent-creature-ammo"></span>
       </div>
     </div>
   </div>
