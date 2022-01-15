@@ -1,9 +1,66 @@
 body {
-  background-color: salmon;
+  color: white;
+  background-color: black;
+}
+
+.battle-ground {
+  display: flex;
+  justify-content: space-between;
 }
 
 #opponent-creature {
-  width: 400px;
-  position: absolute;
+}
+
+#control-actions {
+  position: fixed;
+  bottom: 0;
+}
+
+.setting-container {
+  position: fixed;
+  padding: 10px 0;
+  top: 0;
   right: 0;
+}
+
+.nav {
+  height: 60px;
+}
+
+.creature-stats {
+  max-width: 200px;
+  background-color: gray;
+  border: 1px solid black;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.setting-icon {
+  background-color: darkred;
+  padding: 5px;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+}
+
+.setting-button {
+  border: none;
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+}
+
+.setting-content {
+  visibility: hidden;
+  background-color: gray;
+  border-radius: 5px;
+  padding: 10px 20px;
+  position: fixed;
+  left: 50%;
+  bottom: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.setting-icon:hover {
+  background-color: red;
 }

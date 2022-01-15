@@ -11,56 +11,84 @@
 </head>
 
 <body>
-  <h1>Battle</h1>
-  <div>
-    <div id="opponent-creature">
+  <div class="nav">
+    <div class="setting-container">
+      <button class="setting-button" onclick="toggleSettingModal()">
+        <img class="setting-icon" src="../../assets/images/settings-icon.png" />
+      </button>
+      <div id="setting-modal" class="setting-content">
+        <button onclick="toggleSettingModal()">x</button>
+        <h4>Settings</h4>
+        <ul id="setting-options">
+          <li>Sound</li>
+          <li>Music</li>
+          <li>
+            <a href="/" type="button">Concede Battle</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="battle-ground">
+    <div id="my-creature">
+      <div class="creature-stats">
+        <div>Name: <span class="my-creature-name"></span></div>
+        <div>Life: <span id="my-creature-life"></span></div>
+        <div>Shield: <span id="my-creature-shield"></span></div>
+        <div>Ammo: <span id="my-creature-ammo"></span></div>
+      </div>
+    </div>
+    <div id="opponent-creature" class="creature-stats">
       <h4>Opponent</h4>
       <div>Name: <span id="opponent-creature-name"></span></div>
       <div>Life: <span id="opponent-creature-life"></span></div>
       <div>Shield: <span id="opponent-creature-shield"></span></div>
       <div>Ammo: <span id="opponent-creature-ammo"></span></div>
     </div>
-    <div id="my-creature">
-      <div>Name: <span class="my-creature-name"></span></div>
-      <div>Life: <span id="my-creature-life"></span></div>
-      <div>Shield: <span id="my-creature-shield"></span></div>
-      <div>Ammo: <span id="my-creature-ammo"></span></div>
-    </div>
+  </div>
+  <div id="control-actions">
     <p>What will <span class="my-creature-name"></span> do?</p>
     <ul>
       <li>
         <button onclick="executeAction('a')">Attack</button>
+      </li>
+      <li>
         <button onclick="executeAction('d')">Defend</button>
+      </li>
+      <li>
         <button onclick="executeAction('r')">Recharge</button>
       </li>
     </ul>
   </div>
-  <div id="settings">
-    <button>Close</button>
-    <h4>Settings</h4>
-    <ul id="setting-options">
-      <li>Sound</li>
-      <li>Music</li>
-      <li>
-        <a href="/" type="button">Concede Battle</a>
-      </li>
-    </ul>
-  </div>
+
   <script>
     const gameId = localStorage.getItem("gameId");
+    let showModal = false;
+
+    const toggleSettingModal = () => {
+      const modal = document.querySelector('#setting-modal');
+      if (showModal === false) {
+        modal.style.visibility = "inherit";
+      } else {
+        modal.style.visibility = "hidden";
+      }
+      showModal = !showModal;
+    }
+
+    const setCreatureDisplay = (creature, id) => {
+      document.querySelector(`#${id}-creature-life`).innerHTML = creature.life;
+      document.querySelector(`#${id}-creature-ammo`).innerHTML = creature.ammunition;
+      document.querySelector(`#${id}-creature-shield`).innerHTML = creature.powerShield;
+    }
 
     const setCreatureStats = (creatures) => {
       const opponent = creatures.find(c => c.isComputerPlayer);
       const player = creatures.find(c => !c.isComputerPlayer);
       document.querySelector("#opponent-creature-name").innerHTML = opponent.name;
-      document.querySelector("#opponent-creature-life").innerHTML = opponent.life;
-      document.querySelector("#opponent-creature-shield").innerHTML = opponent.powerShield;
-      document.querySelector("#opponent-creature-ammo").innerHTML = opponent.ammunition;
+      setCreatureDisplay(opponent, 'opponent');
 
       document.querySelectorAll(".my-creature-name").forEach(i => i.innerHTML = player.name);
-      document.querySelector("#my-creature-life").innerHTML = player.life;
-      document.querySelector("#my-creature-shield").innerHTML = player.powerShield;
-      document.querySelector("#my-creature-ammo").innerHTML = player.ammunition;
+      setCreatureDisplay(player, "my")
     }
 
     const init = () => {

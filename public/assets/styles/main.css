@@ -1,3 +1,49 @@
 body {
-  background-color: royalblue;
+  color: white;
+  background-color: black;
+}
+
+.content {
+  z-index: 200;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.bg-wild-warriors {
+  background-image: url('../images/bg-wild-warriors.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.button-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+a {
+  width: 100%;
+  text-align: center;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid red;
+  background-color: brown;
+  padding: 20px 0px;
+}
+
+h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 5em;
 }
