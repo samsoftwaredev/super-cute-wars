@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 const BattleComp = require('./game/classes/BattleCompClass');
@@ -41,6 +42,28 @@ app.post('/battle/status/:id', (req, res) => {
   };
 
   res.json(payload);
+});
+
+app.get('/battle/setting/:id', (req, res) => {
+  const { id } = req.params;
+  const { battle } = games[id];
+
+  const setting = battle.arena.image;
+  const ImagePath = path.join(
+    __dirname + '/game/arenas/assets/images/' + setting,
+  );
+
+  fs.readFile(ImagePath, function (err, content) {
+    if (err) {
+      res.writeHead(400, { 'Content-type': 'text/html' });
+      console.log(err);
+      res.end('No such image');
+    } else {
+      //specify the content type in the response will be an image
+      res.writeHead(200, { 'Content-type': 'image/jpg' });
+      res.end(content);
+    }
+  });
 });
 
 app.post('/battle/:id', async (req, res) => {

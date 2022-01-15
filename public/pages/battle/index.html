@@ -37,7 +37,7 @@
         <div class="creature-name-container">
           <span class="my-creature-name"></span>
           <div>
-            <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+            <img class="attack-icon" src="../../assets/images/attack-icon.png">
             <span id="my-creature-ammo"></span>
           </div>
         </div>
@@ -57,7 +57,7 @@
       <div class="creature-name-container">
         <span id="opponent-creature-name"></span>
         <div>
-          <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+          <img class="attack-icon" src="../../assets/images/attack-icon.png">
           <span id="opponent-creature-ammo"></span>
         </div>
       </div>
@@ -114,21 +114,32 @@
       const player = creatures.find(c => !c.isComputerPlayer);
       document.querySelector("#opponent-creature-name").innerHTML = opponent.name;
       setCreatureDisplay(opponent, 'opponent');
-
       document.querySelectorAll(".my-creature-name").forEach(i => i.innerHTML = player.name);
       setCreatureDisplay(player, "my")
     }
 
+    const setBackground = (bgURL) => {
+      document.body.style.backgroundImage = `url(${bgURL})`;
+      document.body.style.backgroundRepeat = 'no-repeat';
+      document.body.style.backgroundAttachment = 'fixed';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundSize = "cover";
+    }
+
     const init = () => {
-      fetch(`battle/status/${gameId}`, {
-        method: 'POST',
+      fetch(`/battle/setting/${gameId}`, {
+        method: 'GET',
+      }).then((data) => {
+        setBackground(data.url)
+        return fetch(`battle/status/${gameId}`, {
+          method: 'POST',
+        })
       }).then(response => response.json())
         .then(data => {
-          console.log(data);
           const { isGameOver, creaturesBattling: creatures } = data.game;
           setCreatureStats(creatures)
           if (isGameOver) localStorage.removeItem("gameId");
-          if (gameId === null) window.location.href = '/'
+          if (gameId === null) window.location.href = '/';
         });
     }
 
