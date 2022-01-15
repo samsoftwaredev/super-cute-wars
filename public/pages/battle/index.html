@@ -33,17 +33,41 @@
     <div id="my-creature">
       <div class="creature-stats">
         <div>Name: <span class="my-creature-name"></span></div>
-        <div>Life: <span id="my-creature-life"></span></div>
-        <div>Shield: <span id="my-creature-shield"></span></div>
-        <div>Ammo: <span id="my-creature-ammo"></span></div>
+        <div>Life:
+          <div class="meter orange nostripes">
+            <span id="my-creature-life" class="meter-danger"></span>
+          </div>
+        </div>
+        <div>Shield:
+          <div class="meter orange nostripes">
+            <span id="my-creature-shield" class="meter-primary"></span>
+          </div>
+        </div>
+        <div>
+          <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+          <span id="my-creature-ammo"></span>
+        </div>
       </div>
     </div>
     <div id="opponent-creature" class="creature-stats">
       <h4>Opponent</h4>
       <div>Name: <span id="opponent-creature-name"></span></div>
-      <div>Life: <span id="opponent-creature-life"></span></div>
-      <div>Shield: <span id="opponent-creature-shield"></span></div>
-      <div>Ammo: <span id="opponent-creature-ammo"></span></div>
+      <div>Life:
+        <div class="meter orange nostripes">
+          <span id="opponent-creature-life" class="meter-danger"></span>
+        </div>
+        </span>
+      </div>
+      <div>
+        Shield:
+        <div class="meter orange nostripes">
+          <span id="opponent-creature-shield" class="meter-primary"></span>
+        </div>
+      </div>
+      <div>
+        <img style="height: 15px;" src="../../assets/images/attack-icon.png">
+        <span id="opponent-creature-ammo"></span>
+      </div>
     </div>
   </div>
   <div id="control-actions">
@@ -76,9 +100,9 @@
     }
 
     const setCreatureDisplay = (creature, id) => {
-      document.querySelector(`#${id}-creature-life`).innerHTML = creature.life;
+      document.querySelector(`#${id}-creature-life`).style.width = ((creature.life / 5) * 100) + "%";
       document.querySelector(`#${id}-creature-ammo`).innerHTML = creature.ammunition;
-      document.querySelector(`#${id}-creature-shield`).innerHTML = creature.powerShield;
+      document.querySelector(`#${id}-creature-shield`).style.width = ((creature.powerShield / 125) * 100) + "%";
     }
 
     const setCreatureStats = (creatures) => {
